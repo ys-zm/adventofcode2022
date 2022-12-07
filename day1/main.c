@@ -43,13 +43,14 @@ int replace_greatest(int x, int y)
 char *cut_input(char *str)
 {
     char    *new;
+    
 
-    while (str && *str != '\n')
-        str++;
-    if (*str == '\n')
-        str++;
-    new = ft_strdup(str);
-    free(str);
+    while (str && *str != '\n' && *str != '\0')
+        (*str)++;
+    if (**str == '\n')
+       (*str)++;
+    new = ft_strdup(*str);
+    free(*str);
     return (new);
 }
 
@@ -58,8 +59,11 @@ int find_number(char *str)
     size_t  x;
 
     x = 0;
-    while (str && *str != '\n')
+    while (str && *str != '\n' && *str != '\0')
+    {
         x = x * 10 + (*str - '0');
+        str++;
+    }
     return (x);
 }
 
@@ -73,8 +77,10 @@ size_t  add_chunks(char **str)
     while (new != 0)
     {
         new = find_number(*str);
+        printf("new: %zd", new);
         total = total + new;
-        *str = cut_input(*str);
+        printf("total %zd", total);
+        *str = cut_input(str);
     }
     return (total);
 }
@@ -114,11 +120,9 @@ char    *read_file(int fd)
         while (read_bytes != 0)
     {
         read_bytes = read(fd, buffer, 100);
-        printf("read red %d\n", read_bytes);
         buffer[read_bytes] = 0;
         if (read_bytes)
             file_input = ft_strjoin(file_input, buffer);
-        //printf("file: %s", file_input);
     }
     return (file_input);
 }
@@ -135,13 +139,13 @@ int main(void)
     file = read_file(fd);
     
     max = 0;
-    //printf("file_input %s\n", file);
+   // printf("file_input %s\n", file);
 
-    // while (file && *file)
-    // {
-    //     new = add_chunks(&file);
-    //     max = replace_greatest(new, prev);
-    // }
+    while (file && *file)
+    {
+        new = add_chunks(&file);
+        max = replace_greatest(new, prev);
+    }
     // printf("%zd\n", max);
     return (0);
 }
