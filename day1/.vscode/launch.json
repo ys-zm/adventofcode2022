@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "/Users/yzaim/projects_core/advent_of_code_2022/day1",
+      "program": "/Users/yzaim/projects_core/advent_of_code_2022/day1/build/Debug/outDebug"
+    }
+  ]
+}
