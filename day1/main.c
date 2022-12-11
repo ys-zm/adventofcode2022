@@ -9,27 +9,27 @@ int  ft_strlen(char *str)
     int count;
 
     count = 0;
-    while (str && str[count] != 0)
+    while (str && str[count])
         count++;
     return (count);
 }
 
-char	*ft_strdup(char *s1)
+char	*ft_strdup(char *str)
 {
 	char	*s;
 	int		i;
 
 	i = 0;
-	s = malloc(sizeof(char) * (ft_strlen(s1) + 1));
+	s = malloc(sizeof(char) * (ft_strlen(str) + 1));
 	if (!s)
 		return (0);
-	while (s1[i])
+	while (str && *str)
 	{
-		s[i] = s1[i];
-		i++;
+		s[i] = *str;
+		str++;
+        i++;
 	}
-	s[i] = 0;
-    free(s1);
+	s[i] = '\0';
 	return (s);
 }
 
@@ -44,21 +44,21 @@ char *cut_input(char *str)
 {
     char    *new;
     
-
     while (str && *str != '\n' && *str != '\0')
-        (*str)++;
-    if (**str == '\n')
-       (*str)++;
-    new = ft_strdup(*str);
-    free(*str);
+        (str)++;
+    if (*str == '\n')
+       str++;
+    new = ft_strdup(str);
     return (new);
 }
 
-int find_number(char *str)
+size_t find_number(char *str)
 {
     size_t  x;
 
     x = 0;
+    if (*str == '\n')
+        return 0;
     while (str && *str != '\n' && *str != '\0')
     {
         x = x * 10 + (*str - '0');
@@ -71,16 +71,17 @@ size_t  add_chunks(char **str)
 {
     size_t  total;
     size_t  new;
+    char    *temp;
 
     new = 1;
     total = 0;
     while (new != 0)
     {
         new = find_number(*str);
-        printf("new: %zd", new);
-        total = total + new;
-        printf("total %zd", total);
-        *str = cut_input(str);
+        total += new;
+        temp = cut_input(*str);
+        free(*str);
+        *str = temp;
     }
     return (total);
 }
@@ -120,7 +121,7 @@ char    *read_file(int fd)
         while (read_bytes != 0)
     {
         read_bytes = read(fd, buffer, 100);
-        buffer[read_bytes] = 0;
+        buffer[read_bytes] = '\0';
         if (read_bytes)
             file_input = ft_strjoin(file_input, buffer);
     }
@@ -130,7 +131,9 @@ char    *read_file(int fd)
 int main(void)
 {
     int fd;
-    size_t  max;
+    size_t  max1;
+    size_t  max2;
+    size_t  max3;
     size_t  new;
     size_t  prev;
     char    *file;
@@ -138,14 +141,29 @@ int main(void)
     fd = open("input", O_RDONLY);
     file = read_file(fd);
     
-    max = 0;
-   // printf("file_input %s\n", file);
-
+    max1 = 0;
+    max2 = 0;
+    max3 = 0;
     while (file && *file)
     {
         new = add_chunks(&file);
-        max = replace_greatest(new, prev);
+        if (new > max1)
+        {
+            max3 = max2;
+            max2 = max1;
+            max1 = new;
+        }
+        else if (new > max2)
+        {
+            max3 = max2;
+            max2 = new;
+        }
+        else if (new > max3)
+            max3 = new;
+       // printf("%zd\n", max);
     }
-    // printf("%zd\n", max);
+
+   printf("max1: %zd, max2: %zd, max3: %zd", max1, max2, max3);
+   printf("MAXmax: %zd", max1 + max2 + max3);
     return (0);
 }
