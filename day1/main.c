@@ -140,10 +140,10 @@ int main(void)
     
     fd = open("input", O_RDONLY);
     file = read_file(fd);
-    
     max1 = 0;
     max2 = 0;
     max3 = 0;
+    
     while (file && *file)
     {
         new = add_chunks(&file);
