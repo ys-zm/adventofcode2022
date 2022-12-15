@@ -102,42 +102,38 @@ char    *read_file(int fd)
 size_t  ft_round(char *file)
 {
     char    opponent_play;
-    char    my_play;
+    char    outcome;
     char    opp[3] = {'A', 'B', 'C'};
     char    my[3] = {'X', 'Y', 'Z'};
-    size_t  opp_i;
-    size_t  my_i;
-
-    opp_i = 0;
-    my_i = 0;
+    
     opponent_play = file[0];
-    my_play = file[2];
-    while (opp[opp_i] != opponent_play && opp[opp_i] != 0)
-        opp_i++;
-    while (my[my_i] != my_play && my[my_i] != 0)
-        my_i++;
-    if (opp_i == my_i)
-        return (2); //we draw = 2
-    else if (opp_i == 0)
+    outcome = file[2];
+    if (outcome == 'X') //LOSE
     {
-        if (my_i == 1)
-            return (1); //i win = 1
-        else if (my_i == 2)
-            return (0); //i lose = 0
+        if (opponent_play == 'A')
+            return (3); //for rock i play 'scissors' 'Z' 3
+        else if (opponent_play == 'B')
+            return (1); //for paper i play 'rock' 'X' 1
+        else if (opponent_play == 'C')
+            return (2); //for scissors i play 'paper' 'Y' 2
     }
-    else if (opp_i == 1)
+    else if (outcome == 'Y') //DRAW
     {
-        if (my_i == 0)
-            return (0);
-        else if (my_i == 2)
-            return (1);
+        if (opponent_play == 'A')
+            return (1); //for rock i play 'rock' 'X' 1
+        else if (opponent_play == 'B')
+            return (2); //for paper i play 'paper' 'Y' 2
+        else if (opponent_play == 'C')
+            return (3); //for scissors i play 'scrissors' 'Z' 3
     }
-    else if (opp_i == 2)
+    else if (outcome == 'Z') //WIN
     {
-        if (my_i == 0)
-            return (1);
-        else if (my_i == 1)
-            return (0);
+        if (opponent_play == 'A')
+            return (2); //for rock i play 'paper' 'Z' 2
+        else if (opponent_play == 'B')
+            return (3); //for paper i play 'scissors' 'X' 3
+        else if (opponent_play == 'C')
+            return (1); //for scissors i play 'rock' 'Y' 1
     }
 return (0);
 }
@@ -145,27 +141,22 @@ return (0);
 size_t  game(char **file)
 {
     size_t  score;
-    char    my_play;
+    char    outcome;
     char    *temp;
-    size_t  round_ret;
-    char    my[3] = {'X', 'Y', 'Z'};
-    size_t  my_i;
+    size_t  my_play;
 
     score = 0;
-    round_ret = 0;
+    my_play = 0;
     while (**file)
     {
-        my_play = file[0][2];
-        my_i = 0;
-        while (my[my_i] != my_play && my[my_i] != 0)
-            my_i++;
-        round_ret = ft_round(*file);
-        if (round_ret == 1)
-            score += 6 + my_i + 1;
-        else if (round_ret == 2)
-            score += 3 + my_i + 1;
-        else if (round_ret == 0)
-            score += my_i + 1;
+        outcome = file[0][2];
+        my_play = ft_round(*file);
+        if (outcome == 'X')
+            score += 0 + my_play; //my play;
+        else if (outcome == 'Y')
+            score += 3 + my_play;
+        else if (outcome == 'Z')
+            score += 6 + my_play;
         temp = cut_input(*file);
         free(*file);
         *file = temp;
@@ -173,7 +164,7 @@ size_t  game(char **file)
     return (score);
 }
 
-//part1
+//part2
 int main(void)
 {
     int     fd;
